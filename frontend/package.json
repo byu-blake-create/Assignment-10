@@ -1,0 +1,9 @@
+{
+  "name": "frontend",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix bowling-client run dev",
+    "build": "npm --prefix bowling-client run build",
+    "preview": "npm --prefix bowling-client run preview"
+  }
+}
