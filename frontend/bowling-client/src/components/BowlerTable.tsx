@@ -50,38 +50,40 @@ function BowlerTable() {
 
   return (
     // Render assignment-required columns for each bowler row.
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Team</th>
-          <th>Address</th>
-          <th>City</th>
-          <th>State</th>
-          <th>Zip</th>
-          <th>Phone</th>
-        </tr>
-      </thead>
-      <tbody>
-        {bowlers.map((b) => (
-          // Build a stable key from team + name values.
-          <tr key={`${b.teamName}-${b.bowlerLastName}-${b.bowlerFirstName}`}>
-            <td>
-              {/* Merge first/middle/last into one clean display name */}
-              {`${b.bowlerFirstName ?? ''} ${b.bowlerMiddleInit ?? ''} ${b.bowlerLastName ?? ''}`
-                .replace(/\s+/g, ' ')
-                .trim()}
-            </td>
-            <td>{b.teamName}</td>
-            <td>{b.bowlerAddress}</td>
-            <td>{b.bowlerCity}</td>
-            <td>{b.bowlerState}</td>
-            <td>{b.bowlerZip}</td>
-            <td>{b.bowlerPhoneNumber}</td>
+    <div className="table-wrap">
+      <table className="bowler-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Team</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Zip</th>
+            <th>Phone</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {bowlers.map((b) => (
+            // Build a stable key from team + name values.
+            <tr key={`${b.teamName}-${b.bowlerLastName}-${b.bowlerFirstName}`}>
+              <td>
+                {/* Merge first/middle/last into one clean display name */}
+                {`${b.bowlerFirstName ?? ''} ${b.bowlerMiddleInit ?? ''} ${b.bowlerLastName ?? ''}`
+                  .replace(/\s+/g, ' ')
+                  .trim()}
+              </td>
+              <td>{b.teamName}</td>
+              <td>{b.bowlerAddress}</td>
+              <td>{b.bowlerCity}</td>
+              <td>{b.bowlerState}</td>
+              <td>{b.bowlerZip}</td>
+              <td>{b.bowlerPhoneNumber}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
