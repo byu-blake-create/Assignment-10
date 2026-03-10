@@ -1,34 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace BowlingApi.Models;
 
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<BowlingLeagueContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("BowlingConnection")));
-
-builder.Services.AddCors(options =>
+public partial class Team
 {
-    options.AddPolicy("AllowReact", policy =>
-    {
-        policy.WithOrigins("http://localhost:5173")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
+    public int TeamID { get; set; }
 
-var app = builder.Build();
+    public string TeamName { get; set; } = null!;
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    public int? CaptainID { get; set; }
+
+    public virtual ICollection<Bowler> Bowlers { get; set; } = new List<Bowler>();
 }
-
-app.UseCors("AllowReact");
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-app.Run();

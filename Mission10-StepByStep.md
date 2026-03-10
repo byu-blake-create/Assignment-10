@@ -174,8 +174,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<BowlingLeagueContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("BowlingConnection")));
@@ -194,8 +193,7 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.MapOpenApi();
 }
 
 app.UseCors("AllowReact");
@@ -205,28 +203,49 @@ app.MapControllers();
 app.Run();
 ```
 
-### 4.5 Create DTO and API endpoint
+### 4.5 Create controller API endpoint (no DTO)
 
-Create file `Models/BowlerDto.cs`:
+Before adding the controller, make sure `Program.cs` has `DbContext` registered.
+
+If your file is currently in scaffold mode, use this exact `Program.cs` (OpenAPI, not Swagger):
 
 ```csharp
-namespace BowlingApi.Models;
+using BowlingApi.Models;
+using Microsoft.EntityFrameworkCore;
 
-public class BowlerDto
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<BowlingLeagueContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("BowlingConnection")));
+
+builder.Services.AddCors(options =>
 {
-    public string? BowlerFirstName { get; set; }
-    public string? BowlerMiddleInit { get; set; }
-    public string? BowlerLastName { get; set; }
-    public string TeamName { get; set; } = string.Empty;
-    public string? BowlerAddress { get; set; }
-    public string? BowlerCity { get; set; }
-    public string? BowlerState { get; set; }
-    public string? BowlerZip { get; set; }
-    public string? BowlerPhoneNumber { get; set; }
+    options.AddPolicy("AllowReact", policy =>
+    {
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
 }
+
+app.UseCors("AllowReact");
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
 ```
 
-Create folder `Controllers` and add `Controllers/BowlersController.cs`:
+Now create folder `Controllers` and add `Controllers/BowlersController.cs`:
 
 ```csharp
 using BowlingApi.Models;
@@ -247,7 +266,7 @@ public class BowlersController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BowlerDto>>> GetBowlers()
+    public async Task<IActionResult> GetBowlers()
     {
         var bowlers = await _context.Bowlers
             .Include(b => b.Team)
@@ -255,17 +274,17 @@ public class BowlersController : ControllerBase
                         (b.Team.TeamName == "Marlins" || b.Team.TeamName == "Sharks"))
             .OrderBy(b => b.Team!.TeamName)
             .ThenBy(b => b.BowlerLastName)
-            .Select(b => new BowlerDto
+            .Select(b => new
             {
-                BowlerFirstName = b.BowlerFirstName,
-                BowlerMiddleInit = b.BowlerMiddleInit,
-                BowlerLastName = b.BowlerLastName,
+                b.BowlerFirstName,
+                b.BowlerMiddleInit,
+                b.BowlerLastName,
                 TeamName = b.Team!.TeamName,
-                BowlerAddress = b.BowlerAddress,
-                BowlerCity = b.BowlerCity,
-                BowlerState = b.BowlerState,
-                BowlerZip = b.BowlerZip,
-                BowlerPhoneNumber = b.BowlerPhoneNumber
+                b.BowlerAddress,
+                b.BowlerCity,
+                b.BowlerState,
+                b.BowlerZip,
+                b.BowlerPhoneNumber
             })
             .ToListAsync();
 

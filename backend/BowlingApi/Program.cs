@@ -1,7 +1,13 @@
+using BowlingApi.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+
+builder.Services.AddDbContext<BowlingLeagueContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("BowlingConnection")));
 
 builder.Services.AddCors(options =>
 {
