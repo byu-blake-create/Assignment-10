@@ -5,7 +5,9 @@ import './App.css';
 function App() {
   return (
     <>
+      {/* Page intro/header section */}
       <Heading />
+      {/* Assignment table that loads and displays bowler data */}
       <BowlerTable />
     </>
   );
