@@ -4,6 +4,9 @@
   "scripts": {
     "dev": "npm --prefix bowling-client run dev",
     "build": "npm --prefix bowling-client run build",
-    "preview": "npm --prefix bowling-client run preview"
+    "preview": "npm --prefix bowling-client run preview",
+    "lint": "npm --prefix bowling-client run lint",
+    "format": "npm --prefix bowling-client run format",
+    "format:check": "npm --prefix bowling-client run format:check"
   }
 }
